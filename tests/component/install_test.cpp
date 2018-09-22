@@ -45,10 +45,10 @@ TEST(InstallTest, verify_package_compatibility_no_entry) {
   ASSERT_EQ(0, writer.Finish());
   ASSERT_EQ(0, fclose(zip_file));
 
-  // Doesn't contain compatibility zip entry.
+  // Doesn't contain shiva.zip entry.
   ZipArchiveHandle zip;
   ASSERT_EQ(0, OpenArchive(temp_file.path, &zip));
-  ASSERT_TRUE(verify_package_compatibility(zip));
+  ASSERT_TRUE(verify_package_shiva.zip));
   CloseArchive(zip);
 }
 
@@ -56,15 +56,15 @@ TEST(InstallTest, verify_package_compatibility_invalid_entry) {
   TemporaryFile temp_file;
   FILE* zip_file = fdopen(temp_file.release(), "w");
   ZipWriter writer(zip_file);
-  ASSERT_EQ(0, writer.StartEntry("compatibility.zip", 0));
+  ASSERT_EQ(0, writer.StartEntry("shiva.zip", 0));
   ASSERT_EQ(0, writer.FinishEntry());
   ASSERT_EQ(0, writer.Finish());
   ASSERT_EQ(0, fclose(zip_file));
 
-  // Empty compatibility zip entry.
+  // Empty shiva.zip entry.
   ZipArchiveHandle zip;
   ASSERT_EQ(0, OpenArchive(temp_file.path, &zip));
-  ASSERT_FALSE(verify_package_compatibility(zip));
+  ASSERT_FALSE(verify_package_shiva.zip));
   CloseArchive(zip);
 }
 
@@ -119,25 +119,25 @@ TEST(InstallTest, read_metadata_from_package_no_entry) {
 }
 
 TEST(InstallTest, verify_package_compatibility_with_libvintf_malformed_xml) {
-  TemporaryFile compatibility_zip_file;
-  FILE* compatibility_zip = fdopen(compatibility_zip_file.release(), "w");
-  ZipWriter compatibility_zip_writer(compatibility_zip);
-  ASSERT_EQ(0, compatibility_zip_writer.StartEntry("system_manifest.xml", kCompressDeflated));
+  TemporaryFile shiva.zip_file;
+  FILE* shiva.zip = fdopen(shiva.zip_file.release(), "w");
+  ZipWriter shiva.zip_writer(shiva.zip);
+  ASSERT_EQ(0, shiva.zip_writer.StartEntry("system_manifest.xml", kCompressDeflated));
   std::string malformed_xml = "malformed";
-  ASSERT_EQ(0, compatibility_zip_writer.WriteBytes(malformed_xml.data(), malformed_xml.size()));
-  ASSERT_EQ(0, compatibility_zip_writer.FinishEntry());
-  ASSERT_EQ(0, compatibility_zip_writer.Finish());
-  ASSERT_EQ(0, fclose(compatibility_zip));
+  ASSERT_EQ(0, shiva.zip_writer.WriteBytes(malformed_xml.data(), malformed_xml.size()));
+  ASSERT_EQ(0, shiva.zip_writer.FinishEntry());
+  ASSERT_EQ(0, shiva.zip_writer.Finish());
+  ASSERT_EQ(0, fclose(shiva.zip));
 
   TemporaryFile temp_file;
   FILE* zip_file = fdopen(temp_file.release(), "w");
   ZipWriter writer(zip_file);
-  ASSERT_EQ(0, writer.StartEntry("compatibility.zip", kCompressStored));
-  std::string compatibility_zip_content;
+  ASSERT_EQ(0, writer.StartEntry("shiva.zip", kCompressStored));
+  std::string shiva.zip_content;
   ASSERT_TRUE(
-      android::base::ReadFileToString(compatibility_zip_file.path, &compatibility_zip_content));
+      android::base::ReadFileToString(shiva.zip_file.path, &shiva.zip_content));
   ASSERT_EQ(0,
-            writer.WriteBytes(compatibility_zip_content.data(), compatibility_zip_content.size()));
+            writer.WriteBytes(shiva.zip_content.data(), shiva.zip_content.size()));
   ASSERT_EQ(0, writer.FinishEntry());
   ASSERT_EQ(0, writer.Finish());
   ASSERT_EQ(0, fclose(zip_file));
@@ -146,12 +146,12 @@ TEST(InstallTest, verify_package_compatibility_with_libvintf_malformed_xml) {
   ASSERT_EQ(0, OpenArchive(temp_file.path, &zip));
   std::vector<std::string> compatibility_info;
   compatibility_info.push_back(malformed_xml);
-  // Malformed compatibility zip is expected to be rejected by libvintf. But we defer that to
+  // Malformed shiva.zip is expected to be rejected by libvintf. But we defer that to
   // libvintf.
   std::string err;
   bool result =
       android::vintf::VintfObjectRecovery::CheckCompatibility(compatibility_info, &err) == 0;
-  ASSERT_EQ(result, verify_package_compatibility(zip));
+  ASSERT_EQ(result, verify_package_shiva.zip));
   CloseArchive(zip);
 }
 
@@ -164,25 +164,25 @@ TEST(InstallTest, verify_package_compatibility_with_libvintf_system_manifest_xml
   std::string system_manifest_xml_content;
   ASSERT_TRUE(
       android::base::ReadFileToString(system_manifest_xml_path, &system_manifest_xml_content));
-  TemporaryFile compatibility_zip_file;
-  FILE* compatibility_zip = fdopen(compatibility_zip_file.release(), "w");
-  ZipWriter compatibility_zip_writer(compatibility_zip);
-  ASSERT_EQ(0, compatibility_zip_writer.StartEntry("system_manifest.xml", kCompressDeflated));
-  ASSERT_EQ(0, compatibility_zip_writer.WriteBytes(system_manifest_xml_content.data(),
+  TemporaryFile shiva.zip_file;
+  FILE* shiva.zip = fdopen(shiva.zip_file.release(), "w");
+  ZipWriter shiva.zip_writer(shiva.zip);
+  ASSERT_EQ(0, shiva.zip_writer.StartEntry("system_manifest.xml", kCompressDeflated));
+  ASSERT_EQ(0, shiva.zip_writer.WriteBytes(system_manifest_xml_content.data(),
                                                    system_manifest_xml_content.size()));
-  ASSERT_EQ(0, compatibility_zip_writer.FinishEntry());
-  ASSERT_EQ(0, compatibility_zip_writer.Finish());
-  ASSERT_EQ(0, fclose(compatibility_zip));
+  ASSERT_EQ(0, shiva.zip_writer.FinishEntry());
+  ASSERT_EQ(0, shiva.zip_writer.Finish());
+  ASSERT_EQ(0, fclose(shiva.zip));
 
   TemporaryFile temp_file;
   FILE* zip_file = fdopen(temp_file.release(), "w");
   ZipWriter writer(zip_file);
-  ASSERT_EQ(0, writer.StartEntry("compatibility.zip", kCompressStored));
-  std::string compatibility_zip_content;
+  ASSERT_EQ(0, writer.StartEntry("shiva.zip", kCompressStored));
+  std::string shiva.zip_content;
   ASSERT_TRUE(
-      android::base::ReadFileToString(compatibility_zip_file.path, &compatibility_zip_content));
+      android::base::ReadFileToString(shiva.zip_file.path, &shiva.zip_content));
   ASSERT_EQ(0,
-            writer.WriteBytes(compatibility_zip_content.data(), compatibility_zip_content.size()));
+            writer.WriteBytes(shiva.zip_content.data(), shiva.zip_content.size()));
   ASSERT_EQ(0, writer.FinishEntry());
   ASSERT_EQ(0, writer.Finish());
   ASSERT_EQ(0, fclose(zip_file));
@@ -195,7 +195,7 @@ TEST(InstallTest, verify_package_compatibility_with_libvintf_system_manifest_xml
   bool result =
       android::vintf::VintfObjectRecovery::CheckCompatibility(compatibility_info, &err) == 0;
   // Make sure the result is consistent with libvintf library.
-  ASSERT_EQ(result, verify_package_compatibility(zip));
+  ASSERT_EQ(result, verify_package_shiva.zip));
   CloseArchive(zip);
 }
 
